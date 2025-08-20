@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sports Buddy — Single File (Firebase + Demo Mode)</title>
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <div class="logo"> <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gradient Background Circle -->
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff512f; stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#dd2476; stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="100" cy="100" r="95" fill="url(#grad)" />
+
+                    <!-- Sport Ball -->
+                    <circle cx="100" cy="100" r="60" fill="white" stroke="#222" stroke-width="6" />
+                    <path d="M60 100 A40 40 0 0 1 140 100" stroke="#222" stroke-width="5" fill="none" />
+                    <path d="M100 60 A40 40 0 0 1 100 140" stroke="#222" stroke-width="5" fill="none" />
+
+                    <!-- Stars for energy -->
+                    <polygon points="100,25 106,45 127,45 110,58 116,78 100,65 84,78 90,58 73,45 94,45"
+                        fill="#ffd700" />
+
+                    <!-- Title -->
+                    <text x="100" y="185" text-anchor="middle" font-family="Poppins, sans-serif" font-size="22"
+                        fill="white" font-weight="bold">
+                        SPORTS
+                    </text>
+                </svg>
+            </div>
+            <div>
+                <div style="font-weight:700">Sports Buddy</div>
+                <small>Find & manage local sports events</small>
+            </div>
+        </div>
+        <div id="envBadge" class="badge warn pill">Checking environment…</div>
+        <button class="btn" id="logoutBtn">Logout</button>
+    </header>
+
+    <main class="container">
+        <!-- Landing: choose role -->
+        <section id="landing" class="grid two view active">
+            <div class="card hl">
+                <h2>Get Started</h2>
+                <p class="pill" style="margin:8px 0 14px 0">Choose a portal to continue</p>
+                <div class="row">
+                    <button class="btn pri" data-open="auth" data-role="user">User Portal</button>
+                    <button class="btn admin" data-open="auth" data-role="admin">Admin Portal</button>
+                </div>
+            </div>
+
+            <!-- Auth panel -->
+            <div id="authPanel" class="card">
+                <div class="row" style="justify-content:space-between;align-items:center">
+                    <h2 id="authTitle">Welcome</h2>
+                    <div class="tabs">
+                        <div class="tab active" data-auth="login">Login</div>
+                        <div class="tab" data-auth="register">Register</div>
+                    </div>
+                </div>
+                <form id="authForm">
+                    <input type="hidden" id="authRole" value="user">
+                    <label>Email</label>
+                    <input id="email" type="email" class="input" placeholder="you@example.com" required>
+                    <label>Password</label>
+                    <input id="password" type="password" class="input" placeholder="••••••••" minlength="6" required>
+                    <div class="row" style="margin-top:10px">
+                        <button class="btn pri" id="authSubmit" type="submit">Continue</button>
+                        <button class="btn ghost" type="button" id="authReset">Reset</button>
+                    </div>
+                    <hr class="sep">
+                    <small id="authNote">No account? switch to Register tab.</small>
+                </form>
+            </div>
+        </section>
+
+        <!-- User Dashboard -->
+        <section id="userDash" class="view">
+            <div class="grid two">
+                <div class="card hl">
+                    <h2>Post a Sports Event</h2>
+                    <form id="eventForm">
+                        <input type="hidden" id="eventId">
+                        <label>Event Name</label>
+                        <input id="evName" class="input" required placeholder="e.g., Sunday Football Meetup">
+                        <label>Sport Category</label>
+                        <select id="evCategory" required></select>
+                        <label>Date & Time</label>
+                        <input id="evDate" class="input" type="datetime-local" required>
+                        <div class="grid two">
+                            <div>
+                                <label>City</label>
+                                <select id="evCity" required>
+                                    <option value="">-- Select City --</option>
+                                    <option value="Ahmedabad">Ahmedabad</option>
+                                    <option value="Surat">Surat</option>
+                                    <option value="Rajkot">Rajkot</option>
+                                    <option value="Vadodara">Vadodara</option>
+                                    <option value="Bhavnagar">Bhavnagar</option>
+                                    <option value="Jamnagar">Jamnagar</option>
+                                    <option value="Junagadh">Junagadh</option>
+                                    <option value="Gandhinagar">Gandhinagar</option>
+                                </select>
+
+                            </div>
+                            <div>
+                                <label>Area</label>
+                                <select id="evArea" required></select>
+                            </div>
+                        </div>
+                        <label>Description</label>
+                        <textarea id="evDesc" rows="3" class="input" placeholder="Short info (max 200 chars)"
+                            maxlength="200"></textarea>
+                        <div class="row" style="margin-top:12px">
+                            <button class="btn ok" type="submit" id="saveEventBtn">Save Event</button>
+                            <button class="btn ghost" type="button" id="clearEventBtn">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>My Events</h2>
+                    <table class="table" id="eventsTable">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Sport</th>
+                                <th>When</th>
+                                <th>City/Area</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section id="adminDash" class="view">
+            <div class="grid two">
+                <div class="card hl">
+                    <h2>Manage Taxonomy</h2>
+                    <div class="grid two">
+                        <div>
+                            <label>Sports Categories</label>
+                            <div class="row">
+                                <input id="catInput" class="input" placeholder="Add category (e.g., Football)">
+                                <button class="btn ok" id="addCat">Add</button>
+                            </div>
+                            <ul id="catList"></ul>
+                        </div>
+                        <div>
+                            <label>Cities</label>
+                            <div class="row">
+                                <input id="cityInput" class="input" placeholder="Add city (e.g., Ahmedabad)">
+                                <button class="btn ok" id="addCity">Add</button>
+                            </div>
+                            <ul id="cityList"></ul>
+                            <label style="margin-top:10px">Areas (for selected city)</label>
+                            <div class="row">
+                                <input id="areaInput" class="input" placeholder="Add area (e.g., Navrangpura)">
+                                <button class="btn ok" id="addArea">Add</button>
+                            </div>
+                            <ul id="areaList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>All Events (Moderation)</h2>
+                    <table class="table" id="allEventsTable">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Sport</th>
+                                <th>When</th>
+                                <th>City/Area</th>
+                                <th>By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer log panel -->
+    <div class="footer">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div class="badge pill">Action Log</div>
+            <div class="row">
+                <button class="btn ghost" id="copyLogs">Copy</button>
+                <button class="btn ghost" id="clearLogs">Clear</button>
+                <button class="btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+        <div id="logbox" class="logbox" aria-live="polite"></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script type="module" src="script.js"></script>
+
+
+</body>
+
+</html>
