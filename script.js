@@ -1,10 +1,3 @@
-/* ==========================================================
-           Sports Buddy — Single File App
-           - Firebase-ready (Auth + Firestore)
-           - Demo Mode fallback (localStorage) if Firebase not configured
-           ========================================================== */
-
-// ---------- Small helpers ----------
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const nowISO = () => new Date().toISOString();
@@ -437,14 +430,12 @@ async function refreshTaxonomy() {
   // user selects
   fillSelect($("#evCategory"), cats);
 
-  // ✅ remember previously selected city
   const prevCity = $("#evCity").value || STATE.citySelected || "";
   fillSelect(
     $("#evCity"),
     cities.map((c) => c.name)
   );
 
-  // ✅ restore selection if still available
   if (cities.find((c) => c.name === prevCity)) {
     $("#evCity").value = prevCity;
     STATE.citySelected = prevCity;
@@ -453,7 +444,7 @@ async function refreshTaxonomy() {
     $("#evCity").value = STATE.citySelected || "";
   }
 
-  // ✅ now update areas for selected city
+  // now update areas for selected city
   const citySel = $("#evCity").value;
   const areas = cities.find((c) => c.name === citySel)?.areas || [];
   fillSelect($("#evArea"), areas);
